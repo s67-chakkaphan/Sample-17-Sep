@@ -1,47 +1,75 @@
-int[][] grid = {{1, 1, 2, 2}, {3, 3, 4, 4}, {5, 5, 6, 6}}; 
+int[] numrand = {1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6}; 
+int[][] grid = new int[3][4]; 
 boolean[][] isPressedGrid = new boolean[3][4]; 
 
 void setup() {
   size(800, 800);
   textSize(32);
-  textAlign(CENTER, CENTER); 
+  textAlign(CENTER, CENTER);
+  shuffleArray(numrand); 
+  fillGrid(); 
 }
 
-void draw(){
+void draw() {
   background(255);
-  int rows = grid.length; 
+  int rows = grid.length;
   int cols = grid[0].length;
-  int w = width / cols; 
-  int h = height / rows; 
+  int w = width / cols;
+  int h = height / rows;
   button_grid(rows, cols, w, h);
+}
+
+void shuffleArray(int[] array) {
+  int i = array.length - 1; 
+  while (i > 0) {
+    int index = int(random(i + 1));
+    int temp = array[i];
+    array[i] = array[index];
+    array[index] = temp;
+    i--; 
+  }
+}
+
+void fillGrid() {
+  int index = 0;
+  int i = 0; 
+  while (i < grid[0].length) {
+    int j = 0; 
+    while (j < grid.length) {
+      grid[j][i] = numrand[index]; 
+      index++;
+      j++;
+    }
+    i++;
+  }
 }
 
 void button_grid(int rows, int columns, int w, int h) {
   strokeWeight(2);
   color c = color(224, 224, 224);
-  color clickedColor = color(150, 150, 150); 
-  
+  color clickedColor = color(150, 150, 150);
+
   int i = 0;
-  while (i < columns) { 
+  while (i < columns) {
     int j = 0;
     while (j < rows) {
-      int x = w * i; 
-      int y = h * j; 
-      if (mousePressed && mouseX > x && mouseX < x + w && 
+      int x = w * i;
+      int y = h * j;
+      if (mousePressed && mouseX > x && mouseX < x + w &&
           mouseY > y && mouseY < y + h) {
-        isPressedGrid[j][i] = true; 
+        isPressedGrid[j][i] = true;
       }
-      
+
       if (isPressedGrid[j][i]) {
-        fill(clickedColor); 
+        fill(clickedColor);
         rect(x, y, w, h);
-        fill(0); 
-        text(grid[j][i], x + w / 2, y + h / 2); 
+        fill(0);
+        text(grid[j][i], x + w / 2, y + h / 2);
       } else {
-        fill(c); 
+        fill(c);
         rect(x, y, w, h);
       }
-      
+
       j++;
     }
     i++;
