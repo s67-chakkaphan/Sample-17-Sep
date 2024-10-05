@@ -1,6 +1,7 @@
 int[] numrand = {1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6}; 
 int[][] grid = new int[3][4]; 
 boolean[][] isPressedGrid = new boolean[3][4]; 
+boolean[][] isVisibleGrid = new boolean[3][4]; 
 
 void setup() {
   size(800, 800);
@@ -46,7 +47,7 @@ void fillGrid() {
 
 void button_grid(int rows, int columns, int w, int h) {
   strokeWeight(2);
-  color c = color(224, 224, 224);
+  color cl = color(224, 224, 224);
   color clickedColor = color(150, 150, 150);
 
   int i = 0;
@@ -55,19 +56,53 @@ void button_grid(int rows, int columns, int w, int h) {
     while (j < rows) {
       int x = w * i;
       int y = h * j;
+      
       if (mousePressed && mouseX > x && mouseX < x + w &&
-          mouseY > y && mouseY < y + h) {
-        isPressedGrid[j][i] = true;
+    mouseY > y && mouseY < y + h) {
+  isPressedGrid[j][i] = true; 
+
+  
+  int pressedCount = 0;
+  int row = 0; 
+  while (row < rows) {
+    int col = 0; 
+    while (col < columns) {
+      if (isPressedGrid[row][col]) {
+        pressedCount++;
       }
+      col++; 
+    }
+    row++; 
+  }
+
+  if (pressedCount > 2) {
+    int r = 0;
+    while (r < rows) {
+      int c = 0;
+      while (c < columns) {
+        if (isPressedGrid[r][c]) {
+          isVisibleGrid[r][c] = false; 
+        }
+        c++; 
+      }
+      r++; 
+    }
+    
+    isPressedGrid = new boolean[3][4];
+  } else {
+    isVisibleGrid[j][i] = true; 
+  }
+}
 
       if (isPressedGrid[j][i]) {
         fill(clickedColor);
-        rect(x, y, w, h);
+      } else {
+        fill(cl);
+      }
+      rect(x, y, w, h);
+      if (isVisibleGrid[j][i]) { 
         fill(0);
         text(grid[j][i], x + w / 2, y + h / 2);
-      } else {
-        fill(c);
-        rect(x, y, w, h);
       }
 
       j++;
