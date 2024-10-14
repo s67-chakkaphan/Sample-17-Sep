@@ -4,6 +4,13 @@ int rows = array2d.length;
 int cols = array2d[0].length;
 int w,h;
 
+boolean[][] matched;  
+int[] firstClick = {-1, -1}; 
+int[] secondClick = {-1, -1}; 
+boolean isChecking = false;
+int revealTime = 1000; 
+int lastClickTime = 0;
+
 void setup() {
     size(500, 500);
     textSize(28);
@@ -13,6 +20,7 @@ void setup() {
     h = height / rows;
     
     revealed = new boolean[rows][cols];
+    matched = new boolean[rows][cols];
     
     addNum(array2d);
     
@@ -24,6 +32,10 @@ void draw(){
     background(255);
     grid_line(cols,rows,w,h);
     number_display();
+    
+    if (isChecking && millis() - lastClickTime >= revealTime) {
+        checkMatch();
+    }    
 }
 
 void grid_line(int cols,int rows,int w,int h){
@@ -55,11 +67,43 @@ void number_display(){
 }
 
 void mousePressed() {
-
     int j = mouseX / w;
     int i = mouseY / h;
     
-    revealed[i][j] = true;
+    if (i >= rows || j >= cols || matched[i][j] || revealed[i][j] || isChecking) {return; } 
+
+    if (firstClick[0] == -1) {
+        firstClick[0] = i;
+        firstClick[1] = j;
+        revealed[i][j] = true;
+    } else if (secondClick[0] == -1 && (i != firstClick[0] || j != firstClick[1])) {
+        secondClick[0] = i;
+        secondClick[1] = j;
+        revealed[i][j] = true;
+        isChecking = true;
+        lastClickTime = millis(); 
+    }
+}
+
+void checkMatch() {
+    int i1 = firstClick[0], j1 = firstClick[1];
+    int i2 = secondClick[0], j2 = secondClick[1];
+
+
+    if (array2d[i1][j1] == array2d[i2][j2]) {
+        matched[i1][j1] = true;
+        matched[i2][j2] = true;
+    } else {
+        revealed[i1][j1] = false;
+        revealed[i2][j2] = false;
+    }
+
+    
+    firstClick[0] = -1;
+    firstClick[1] = -1;
+    secondClick[0] = -1;
+    secondClick[1] = -1;
+    isChecking = false;
 }
 
 void addNum(int[][] array) {
@@ -77,17 +121,17 @@ void addNum(int[][] array) {
     }
 }
 
-void shuffle2dArray(int[][] grid,int rows,int cols) {
+void shuffle2dArray(int[][] array,int rows,int cols) {
   
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
           int randomRow = int(random(rows));
           int randomCol = int(random(cols));
       
-          int temp = grid[i][j];
+          int temp = array[i][j];
           
-          grid[i][j] = grid[randomRow][randomCol];
-          grid[randomRow][randomCol] = temp;
+          array[i][j] = array[randomRow][randomCol];
+          array[randomRow][randomCol] = temp;
     }
   }  
 }
