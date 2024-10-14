@@ -10,9 +10,11 @@ void setup() {
     int cols = array2d[0].length;
     
     addNum(array2d);
-
+    
     int w = width / cols;
     int h = height / rows;
+    
+    shuffle2dArray(array2d,rows,cols);
     
     grid_line(cols,rows,w,h);
     
@@ -42,6 +44,8 @@ void text_number(int num, int x, int y){
 }
 
 void addNum(int[][] array) {
+    stroke(0);
+    strokeWeight(1);
     int num = 1; 
 
     for (int i = 0; i < array.length; i++) {
@@ -52,5 +56,20 @@ void addNum(int[][] array) {
             }
         }
     }
+}
+
+void shuffle2dArray(int[][] grid,int rows,int cols) {
+  
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+          int randomRow = int(random(rows));
+          int randomCol = int(random(cols));
+      
+          int temp = grid[i][j];
+          
+          grid[i][j] = grid[randomRow][randomCol];
+          grid[randomRow][randomCol] = temp;
+    }
+  }  
 }
 
